@@ -51,7 +51,6 @@ tr:nth-child(even) {
 			    <th>Description</th>
 			    <th>Status</th>
 			    <th>Update Time</th>
-			    <th>Action Buttons</th>
 		   </tr>
 		    {% for task in db_task %}
 		    <tr>
@@ -59,7 +58,6 @@ tr:nth-child(even) {
 			    <td>{{ task.task }}</td> 
 			    <td>{{ task.status }}</td> 
 			    <td>{{ task.updated }}</td> 
-			    <td>{{ form.submit}}</td> 
 		    </tr>
 		    {% endfor %}
 	    </table>

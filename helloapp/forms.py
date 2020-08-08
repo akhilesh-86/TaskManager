@@ -40,7 +40,7 @@ class StatusUpdateForm(FlaskForm):
   task_id = IntegerField("Task ID")
   task = StringField("Task Description")
   target = StringField("Target Description")
-  onTrack = BooleanField("On Track")
+  onTrack = RadioField("On Track", choices=["Yes","No"])
   cupdate = StringField("Current Update")
   issue = StringField("Issues")
   submit = SubmitField("Submit")

@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 import random
 from .models import Task
 from .models import User
@@ -180,10 +180,18 @@ def manage_users():
 @app.route('/status/', methods=['GET', 'POST'])
 def manage_status():
   form = StatusForm()
-  status =  Status.query.all()
+  db_task = Task.query.all()
+  status = []
+  for task in db_task:
+      if (task.status == "Open"):
+          db_status = Status.query.filter_by(task_id = task.id)
+          status.append(db_status[0])
+  
   if (request.method == 'POST'):
-      task_id = int(request.form[0])
-      print (task_id)
+      for id in request.form:
+          task_id = id
+          break
+
       return redirect(url_for('update_status', id=task_id, ctime = datetime.now()))
 
   return render_template('manage_status.html', form=form, ctime = datetime.now(), db_status=status)
@@ -193,16 +201,60 @@ def manage_status():
 def update_status(id):
   form = StatusUpdateForm()
   status =  Status.query.filter_by(task_id=id)[0]
-  form.id.data = status.id
-  form.task_id.data = status.task_id
-  form.task.data = status.task
-  form.target.data = status.target
-  form.onTrack.data = status.onTrack
-  form.cupdate.data = status.cupdate
-  form.issue.data = status.issues
-  if (request.method == 'POST'):
-      status_r = Status.query.filter_by(task_id=id).update(dict(target=form.target.data,onTrack=form.on_track.data,cupdate=form.cupdate.data,issue=form.issue.data))
-      db.session.commit()
-      return redirect(url_for('manage_status'))
+  try:
+      if (request.method == 'POST'):
+          if (len(form.cupdate.data) < 1):
+              err = "Please provide Proper Status of Task"
+              form.id.data = status.id
+              form.id.render_kw = {'disabled': 'disabled'}
+              form.task_id.data = status.task_id
+              form.task_id.render_kw = {'disabled': 'disabled'}
+              form.task.data = status.task
+              form.task.render_kw = {'disabled': 'disabled'}
+              form.target.data = status.target
+              form.cupdate.data = status.cupdate
+              form.issue.data = status.issues
+              return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status, err=err)
+          if (form.onTrack.data == None):
+              err= "Please update if task is on track or not"
+              form.id.data = status.id
+              form.id.render_kw = {'disabled': 'disabled'}
+              form.task_id.data = status.task_id
+              form.task_id.render_kw = {'disabled': 'disabled'}
+              form.task.data = status.task
+              form.task.render_kw = {'disabled': 'disabled'}
+              form.target.data = status.target
+              form.cupdate.data = status.cupdate
+              form.issue.data = status.issues
+              return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status, err=err)
+          elif (form.onTrack.data == "Yes"):
+            status = True
+          elif (form.onTrack.data == "No"):
+            status = False
+          status_r = Status.query.filter_by(task_id=id).update(dict(target=form.target.data,onTrack=status,cupdate=form.cupdate.data,issues=form.issue.data))
+          db.session.commit()
+          return redirect(url_for('manage_status'))
 
-  return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status)
+      form.id.data = status.id
+      form.id.render_kw = {'disabled': 'disabled'}
+      form.task_id.data = status.task_id
+      form.task_id.render_kw = {'disabled': 'disabled'}
+      form.task.data = status.task
+      form.task.render_kw = {'disabled': 'disabled'}
+      form.target.data = status.target
+      form.cupdate.data = status.cupdate
+      form.issue.data = status.issues
+      return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status)
+  except:
+      err = "Some Error Occured... Please try again by closing this window..!"
+      form.id.data = status.id
+      form.id.render_kw = {'disabled': 'disabled'}
+      form.task_id.data = status.task_id
+      form.task_id.render_kw = {'disabled': 'disabled'}
+      form.task.data = status.task
+      form.task.render_kw = {'disabled': 'disabled'}
+      form.target.data = status.target
+      form.cupdate.data = status.cupdate
+      form.issue.data = status.issues
+      return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status, err=err)
+
