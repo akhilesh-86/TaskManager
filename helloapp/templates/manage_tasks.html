@@ -1,0 +1,24 @@
+{% block content %}
+    <h2 style = "text-align: center;">Task Management Form</h2>
+      <form action = "" method = POST>
+         <fieldset>
+            <legend>Task Maintenance Form</legend>
+            <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;" >
+               {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
+            </div>
+            <div style = "font-size:20px; font-weight:bold; margin-left:150px;" >
+	       {{ form.action }}
+               {{ form.taskName.label }} : {{ form.taskName }}<br><br>
+	       {{ form.taskList.label }} : {{ form.taskList }}<br><br>
+               {{ form.submit }}
+               {{ form.getTask }}
+            </div>
+            <div style = "font-size:10px;  margin-left:150px; text-align=center; background-color:lightgreen" >
+            {% if message %} <br><br>{{ message }}<br><br> {% endif %}
+            </div>
+            <div style = "font-size:10px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
+            {% if err %} <br><br>{{ err }}<br><br> {% endif %}
+            </div>
+         </fieldset>
+      </form>
+{% endblock %}
