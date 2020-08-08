@@ -1,0 +1,52 @@
+<style>
+div {
+  font-family: arial, sans-serif;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid black;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
+{% block content %}
+    <h2 style = "text-align: center;">Task Management Form</h2>
+      <form action = "" method = POST>
+         <fieldset>
+            <legend>Status Maintenance</legend>
+	    <table style="width=100%; border: 1px solid black">
+		    <tr>
+			    <th>Task ID</th>
+			    <th>Task Description</th>
+			    <th>Target Description</th>
+			    <th>On Track</th>
+			    <th>Update Comments</th>
+			    <th>Issues</th>
+			    <th>Action Buttons</th>
+		   </tr>
+		    {% for task in db_status %}
+		    <tr>
+			    <td>{{ task.id }}</td> 
+			    <td>{{ task.task }}</td> 
+			    <td>{{ task.target }}</td> 
+			    <td>{{ task.onTrack }}</td> 
+			    <td>{{ task.cupdate }}</td> 
+			    <td>{{ task.issues }}</td> 
+			    <td><button type='submit' name={{ task.id}}>Update</button></td> 
+		    </tr>
+		    {% endfor %}
+	    </table>
+         </fieldset>
+      </form>
+{% endblock %}

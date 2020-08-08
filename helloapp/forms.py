@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, validators, DateTimeField, RadioField, SelectField, PasswordField
+from wtforms import StringField, SubmitField, validators, DateTimeField, RadioField, SelectField, PasswordField, BooleanField, IntegerField
 
 # Define QuoteForm below
 class QuoteForm(FlaskForm):
@@ -10,6 +10,7 @@ class QuoteForm(FlaskForm):
 class TaskForm(FlaskForm):
   currTime = DateTimeField("Current Time")
   action = RadioField("Select Action", choices=["Add Task","Update Task", "Delete Task"])
+  status = RadioField("Task Status", choices=["Open","Close"])
   taskName = StringField("Task Description(New)", [validators.Length(min=5,max=500)])
   taskList = SelectField("Select Task to Update") # choices will be updated dynamically
   submit = SubmitField("Submit")
@@ -24,3 +25,24 @@ class UserForm(FlaskForm):
   submit = SubmitField("Submit")
   getUser = SubmitField("Get User List")
   reset = SubmitField("Reset")
+
+
+
+class StatusForm(FlaskForm):
+  taskName = StringField("Task Description(New)", [validators.Length(min=5,max=500)])
+  target = StringField("Target Description")
+  status = BooleanField("Task Status")
+  currentUpdate = StringField("Current Status")
+  issues = StringField("Issues Related to Task")
+ 
+class StatusUpdateForm(FlaskForm):
+  id = IntegerField("Status ID")
+  task_id = IntegerField("Task ID")
+  task = StringField("Task Description")
+  target = StringField("Target Description")
+  onTrack = BooleanField("On Track")
+  cupdate = StringField("Current Update")
+  issue = StringField("Issues")
+  submit = SubmitField("Submit")
+
+

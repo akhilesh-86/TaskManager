@@ -1,4 +1,26 @@
 {% block content %}
+<style>
+div {
+  font-family: arial, sans-serif;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid black;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
     <h2 style = "text-align: center;">Task Management Form</h2>
       <form action = "" method = POST>
          <fieldset>
@@ -6,19 +28,41 @@
             <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;" >
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
-            <div style = "font-size:20px; font-weight:bold; margin-left:150px;" >
+            <div style = "font-size:15px; font-weight:bold; margin-left:150px;" >
 	       {{ form.action }}
-               {{ form.taskName.label }} : {{ form.taskName }}<br><br>
+               {{ form.taskName.label }} : {{ form.taskName }}<br>
+               {{ form.status.label }} : {{ form.status }}
 	       {{ form.taskList.label }} : {{ form.taskList }}<br><br>
                {{ form.submit }}
                {{ form.getTask }}
             </div>
-            <div style = "font-size:10px;  margin-left:150px; text-align=center; background-color:lightgreen" >
+            <div style = "font-size:12px;  margin-left:150px; text-align=center; background-color:lightgreen" >
             {% if message %} <br><br>{{ message }}<br><br> {% endif %}
             </div>
-            <div style = "font-size:10px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
+            <div style = "font-size:12px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
             {% if err %} <br><br>{{ err }}<br><br> {% endif %}
             </div>
+         </fieldset>
+         <fieldset>
+            <legend>List Of Current Tasks</legend>
+	    <table style="width=100%; border: 1px solid black">
+		    <tr>
+			    <th>ID</th>
+			    <th>Description</th>
+			    <th>Status</th>
+			    <th>Update Time</th>
+			    <th>Action Buttons</th>
+		   </tr>
+		    {% for task in db_task %}
+		    <tr>
+			    <td>{{ task.id }}</td> 
+			    <td>{{ task.task }}</td> 
+			    <td>{{ task.status }}</td> 
+			    <td>{{ task.updated }}</td> 
+			    <td>{{ form.submit}}</td> 
+		    </tr>
+		    {% endfor %}
+	    </table>
          </fieldset>
       </form>
 {% endblock %}

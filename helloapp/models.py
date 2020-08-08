@@ -11,8 +11,9 @@ class Quotes(db.Model):
         return "<Quote : {}>".format(self.quotestring)
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    task = db.Column(db.String(500), index=True)
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    task = db.Column(db.String(500), index=True, primary_key=True,nullable=False)
+    status = db.Column(db.String(10), index=True)
     updated = db.Column(db.DateTime)
 
 class Status(db.Model):

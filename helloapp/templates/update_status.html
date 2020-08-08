@@ -1,0 +1,24 @@
+{% block content %}
+    <h2 style = "text-align: center;">Task Management Form</h2>
+      <form action = "" method = POST>
+         <fieldset>
+            <legend>Status Update Form</legend>
+            <div style = "font-size:15px; font-weight:bold; margin-left:150px;" >
+	       {{ form.id.label }} : {{ form.id }}
+               {{ form.task_id.label }} : {{ form.task_id }}<br>
+               {{ form.task.label }} : {{ form.task }}
+	       {{ form.target.label }} : {{ form.target }}<br><br>
+	       {{ form.onTrack.label }} : {{ form.on_tract }}<br><br>
+	       {{ form.cupdate.label }} : {{ form.cupdate }}<br><br>
+	       {{ form.issue.label }} : {{ form.issue }}<br><br>
+               {{ form.submit }}
+            </div>
+            <div style = "font-size:12px;  margin-left:150px; text-align=center; background-color:lightgreen" >
+            {% if message %} <br><br>{{ message }}<br><br> {% endif %}
+            </div>
+            <div style = "font-size:12px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
+            {% if err %} <br><br>{{ err }}<br><br> {% endif %}
+            </div>
+         </fieldset>
+      </form>
+{% endblock %}
