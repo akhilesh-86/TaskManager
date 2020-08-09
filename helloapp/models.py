@@ -19,6 +19,7 @@ class Status(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), index=True)
+    type = db.Column(db.String(20), index=True)
     pwd = db.Column(db.String(20), index=True)
 
 class StatusHistory(db.Model):

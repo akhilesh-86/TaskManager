@@ -16,6 +16,7 @@ class UserForm(FlaskForm):
   currTime = DateTimeField("Current Time")
   action = RadioField("Select Action", choices=["Add User","Update User Password", "Delete User"])
   userName = StringField("User Name", [validators.Length(min=2,max=50)])
+  userType = RadioField("Select User Type", choices=["Admin","Regular"])
   password = PasswordField("Password")
   userList = SelectField("Select User to Update") # choices will be updated dynamically
   submit = SubmitField("Submit")

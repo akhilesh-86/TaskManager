@@ -111,11 +111,16 @@ def manage_tasks():
 
           task_list = [task.task for task in Task.query.all()]
           form.taskList.choices = task_list
-          form.taskName.data = ""
+          form.taskName.data = task_list[0]
           form.status.data = ""
           return render_template('manage_tasks.html', form=form, ctime = datetime.now(), db_task=db_task_list)
 
-  return render_template('manage_tasks.html', form=form, ctime = datetime.now(), db_task=[])
+  task = Task.query.all()
+  try:
+      form.taskList.choices = [task.task for task in Task.query.all()]
+  except:
+      form.taskList.choices = []
+  return render_template('manage_tasks.html', form=form, ctime = datetime.now(), db_task=task)
  
 
 
@@ -124,38 +129,46 @@ def manage_tasks():
 def manage_users():
   form = UserForm()
   if (request.method == 'POST'):
+      db_user=User.query.all()
       if (form.submit.data):
           if (not form.action.data):
               field  = "Action"
               err = "Please select Action"
-              return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now())
+              return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
 
           elif (str(form.action.data) == "Add User"):
 
-              if (len(str(form.userName.data)) > 50 or len(str(form.userName.data)) < 2):
+              if (form.userName.data is None or len(str(form.userName.data)) > 50 or len(str(form.userName.data)) < 2):
                   field  = "UserName"
                   err = "UserName Must be between 2-50 characters"
-                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now())
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
+
               elif (len(str(form.userName.data).split()) > 1 ):
                   field  = "UserName"
                   err = "UserName Must not contain space"
-                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now())
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
+
+              elif (form.userType.data is None):
+                  field  = "UserType"
+                  err = "Please select UserType"
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
+
               else:
-                  user = User(name=form.userName.data,pwd=form.password.data)
+                  user = User(name=form.userName.data,pwd=form.password.data,type=form.userType.data)
                   db.session.add(user)
                   db.session.commit()
-                  return render_template('manage_users.html', form=form, message="User Added Successfully", field=None, ctime = datetime.now())
+                  return render_template('manage_users.html', form=form, message="User Added Successfully", field=None, ctime = datetime.now(),user=db_user)
 
           elif (str(form.action.data) == "Update User Password"):
              user = User.query.filter_by(name=str(form.userList.data)).update(dict(pwd=str(form.password.data)))
              db.session.commit()
-             return render_template('manage_users.html', form=form, message="Password Updated Successfully", field=None, ctime = datetime.now())
+             return render_template('manage_users.html', form=form, message="Password Updated Successfully", field=None, ctime = datetime.now(),user=db_user)
 
           elif (str(form.action.data) == "Delete User"):
              user = User.query.filter_by(name=str(form.userList.data))
              db.session.delete(user[0])
              db.session.commit()
-             return render_template('manage_users.html', form=form, message="User Deleted Successfully", field=None, ctime = datetime.now())
+             return render_template('manage_users.html', form=form, message="User Deleted Successfully", field=None, ctime = datetime.now(),user=db_user)
              
       elif (form.getUser.data):
 
@@ -164,13 +177,18 @@ def manage_users():
 
           user_list = [user.name for user in User.query.all()]
           form.userList.choices = user_list
-          return render_template('manage_users.html', form=form, ctime = datetime.now())
+          return render_template('manage_users.html', form=form, ctime = datetime.now(),user=db_user)
 
       elif (form.reset.data):
           form = UserForm()
-          return render_template('manage_users.html', form=form, ctime = datetime.now())
+          return render_template('manage_users.html', form=form, ctime = datetime.now(),user=db_user)
 
-  return render_template('manage_users.html', form=form, ctime = datetime.now())
+  db_user=User.query.all()
+  try:
+      form.userList.choices = [user.name for user in User.query.all()]
+  except:
+      form.userList.choices = []
+  return render_template('manage_users.html', form=form, ctime = datetime.now(),user=db_user)
  
 
 

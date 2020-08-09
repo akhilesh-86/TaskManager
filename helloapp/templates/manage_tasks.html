@@ -9,8 +9,8 @@
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
             <div style = "font-size:14px; " >
-	       {{ form.action }}
-	       {{ form.taskName.label }} <br> {{ form.taskName(cols=35, rows=5) }}<br> 
+	       {{ form.action(onchange="updateTaskList()") }}
+	       {{ form.taskName.label }} <br> {{ form.taskName(cols=35, rows=5) }}<br> <br>
                {{ form.status.label }} : {{ form.status }}
 	       {{ form.taskList.label }} <br> {{ form.taskList(onchange="updateTaskName()") }}<br><br>
                {{ form.submit }}
@@ -27,6 +27,10 @@
       <script>
 	      function updateTaskName(){
 		      document.getElementById('taskName').value = document.getElementById('taskList').value
+	      }
+	      function updateTaskList(){
+		      action = document.getElementByName('action')
+		      document.getElementById('taskList').disabled = true
 	      }
       </script>
 {% endblock %}
