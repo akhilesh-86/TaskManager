@@ -6,7 +6,7 @@ from wtforms import StringField, SubmitField, validators, DateTimeField, RadioFi
 class TaskForm(FlaskForm):
   currTime = DateTimeField("Current Time")
   action = RadioField("Select Action", choices=["Add Task","Update Task", "Delete Task"])
-  status = RadioField("Task Status", choices=["Open","Close"])
+  status = RadioField("Task Status", choices=["Open","Close","Pending","Postponed"])
   taskName = StringField("Task Description", [validators.Length(min=5,max=500)], widget=TextArea())
   taskList = SelectField("Select Task to Update") # choices will be updated dynamically
   submit = SubmitField("Submit")

@@ -2,8 +2,8 @@ from helloapp import db
 
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    task = db.Column(db.String(500), index=True, primary_key=True,nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String(500), index=True, nullable=False, primary_key=True)
     status = db.Column(db.String(10), index=True)
     updated = db.Column(db.DateTime)
 
@@ -31,3 +31,13 @@ class StatusHistory(db.Model):
     onTrack = db.Column(db.Boolean, index=True)
     cupdate = db.Column(db.String(500), index=True)
     issues = db.Column(db.String(500), index=True)
+
+
+
+class UniqueIDs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status_id = db.Column(db.Integer)
+    task_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+    status_hist_id = db.Column(db.Integer)
+

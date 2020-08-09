@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for
 import random
+from .models import UniqueIDs
 from .models import Task
 from .models import User
 from .models import Status
@@ -35,11 +36,24 @@ def manage_tasks():
                   err = "Please select Status"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
               else:
-                  task = Task(updated = datetime.now(),task=form.taskName.data,status=form.status.data)
+                  id_db = UniqueIDs.query.all()
+                  if (len(id_db) == 0):
+                      i = UniqueIDs(id=1, task_id=1)
+                      db.session.add(i)
+                      db.session.commit()
+                      id = 1
+                      status_id=1
+                  else:
+                      id = id_db[0].task_id+1
+                      status_id=id_db[0].status_id+1
+                      i = UniqueIDs.query.filter_by(id=1).update(dict(task_id=id))
+                      db.session.commit()
+
+                  task = Task(id=id,updated = datetime.now(),task=form.taskName.data,status=form.status.data)
                   db.session.add(task)
                   db.session.commit()
                   task1 = Task.query.filter_by(updated=task.updated)[0]
-                  status = Status(task_id=task1.id,task=task1.task,onTrack=True)
+                  status = Status(d=status_id,task_id=task1.id,task=task1.task,onTrack=True)
                   db.session.add(status)
                   db.session.commit()
                   return render_template('manage_tasks.html', form=form, message="Task Added Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
@@ -50,31 +64,51 @@ def manage_tasks():
                   err = "Please select Status"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
 
+             if (form.taskName.data is None or len(str(form.taskName.data)) == 0):
+                  field = "TaskList"
+                  err = "Please update proper descriptio of the Task to Update"
+                  return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
+
              if (form.taskList.data is None or len(str(form.taskList.data)) == 0):
                   field = "TaskList"
                   err = "Please select task from list to Update"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
+             l = Task.query.filter_by(task=str(form.taskName.data))
+             try:
+                print (l[0])
+                found=True
+             except:
+                found=False
+             if (found == True and str(form.taskList.data) != str(form.taskName.data)):
+                  field = "TaskName"
+                  err = "Task Already Exists"
+                  return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
+
              task = Task.query.filter_by(task=str(form.taskList.data)).update(dict(task=str(form.taskName.data),status=str(form.status.data)))
              db.session.commit()
              return render_template('manage_tasks.html', form=form, message="Task Updated Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
 
           elif (str(form.action.data) == "Delete Task"):
-             if (len(str(form.taskList.data)) == 0):
+             if (len(str(form.taskList.data)) == 0 or form.taskList.data is None):
                   field = "TaskList"
                   err = "Please select task from list to Delete"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
 
              task = Task.query.filter_by(task=str(form.taskList.data))
-             status = Status.query.filter_by(task_id=task[0].id)
-             try:
-                 db.session.delete(status[0])
-             except:
-                 print ("Skipped")
+#             status = Status.query.filter_by(task_id=task[0].id)
+#             try:
+#                 db.session.delete(status[0])
+#             except:
+#                 print ("Skipped")
              db.session.delete(task[0])
              db.session.commit()
              return render_template('manage_tasks.html', form=form, message="Task DeletedSuccessfully", field=None, ctime = datetime.now(), db_task=db_task_list)
              
       elif (form.getTask.data):
+          db_task_list = Task.query.all()
+          if (len(db_task_list) == 0):
+              return render_template('manage_tasks.html', form=form, ctime = datetime.now(), db_task=db_task_list, message="No records found")
+
           task_list = [task.task for task in Task.query.all()]
           form.taskList.choices = task_list
           form.taskName.data = ""
@@ -101,6 +135,10 @@ def manage_users():
               if (len(str(form.userName.data)) > 50 or len(str(form.userName.data)) < 2):
                   field  = "UserName"
                   err = "UserName Must be between 2-50 characters"
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now())
+              elif (len(str(form.userName.data).split()) > 1 ):
+                  field  = "UserName"
+                  err = "UserName Must not contain space"
                   return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now())
               else:
                   user = User(name=form.userName.data,pwd=form.password.data)

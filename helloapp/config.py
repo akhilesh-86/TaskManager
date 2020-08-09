@@ -7,7 +7,7 @@ class BaseConfig(object):
     TESTING = False
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'hello.db')
+        'sqlite:///' + os.path.join(basedir, 'task_manager.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
 

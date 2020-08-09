@@ -4,7 +4,7 @@
       <form action = "" method = POST>
          <fieldset>
             <legend>User Maintenance Form</legend>
-            <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;" >
+            <div style = "font-size:14px; margin-left:150px; text-align:right; background-color:lightblue;" >
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
             <div >
@@ -15,10 +15,10 @@
                {{ form.submit }}
                {{ form.getUser }}
             </div>
-            <div style = "font-size:10px;  margin-left:150px; text-align=center; background-color:lightgreen" >
+            <div style = "font-size:14px;  margin-left:150px; text-align=center; background-color:lightgreen" >
             {% if message %} <br><br>{{ message }}<br><br> {% endif %}
             </div>
-            <div style = "font-size:10px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
+            <div style = "font-size:14px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
             {% if err %} <br><br>{{ err }}<br><br> {% endif %}
             </div>
          </fieldset>
