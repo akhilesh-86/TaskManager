@@ -3,8 +3,6 @@ import random
 from .models import Task
 from .models import User
 from .models import Status
-from .models import Quotes
-from .forms import QuoteForm
 from .forms import TaskForm
 from .forms import StatusUpdateForm
 from .forms import UserForm
@@ -15,54 +13,6 @@ from datetime import datetime
 @app.route('/')
 def hello():
     return render_template('index.html')
-
-@app.route('/hello/<string:username>/')
-def hello_user(username):
-
-    quotes = Quotes.query.all()
-    quotes = [ quote.quotestring for quote in quotes]
-
-    random_quote = random.choice(quotes)
-
-    return render_template('hello_user.html', username=username, quote=random_quote)
-
-@app.route('/quotes/')
-def display_quotes():
-
-    quotes = Quotes.query.all()
-    quotes = [ quote.quotestring for quote in quotes]
-
-    return render_template('quotes.html', quotes=quotes)
-
-## Define below a view function 'add_quote', which renders 'addquote.html' template that displays the form , QuoteForm
-## The form takes a quote and it's author information and submit's it to server.
-## The server process the input data and if found valid, the data is inserted into quotes table.
-## and finally renders 'addquote_confirmation.html' template.
-## In case if any error is found in input, it renders 'addquote.html' template highlighting errors.
-## that displays all the quotes present in 'quotes' list in a unordered list.
-
-@app.route('/addquote/', methods=['GET', 'POST'])
-def add_quote():
-  form = QuoteForm()
-  if (request.method == 'POST'):
-    qa = len(str(form.qauthor.data))
-    qs = len(str(form.qstring.data))
-    if (qa == 0):
-      return render_template("addquote.html", form=form, field="author", err="[This field is required.]")
-    elif (qa < 3 or qa > 100):
-      return render_template("addquote.html", form=form, field="author", err="[Field must be between 3 and 100 characters long.]")
-    elif (qs == 0):
-      return render_template("addquote.html", form=form, field="string", err="[This field is required.]")
-    elif (qs < 3 or qs > 200):
-      return render_template("addquote.html", form=form, field="string", err="[Field must be between 3 and 200 characters long.]")
-    else:
-      q1 = Quotes(quoteauthor=form.qauthor.data, quotestring=form.qstring.data)
-      db.session.add(q1)
-      db.session.commit()
-      return render_template("addquote_confirmation.html")
-
-  return render_template("addquote.html", form=form, field=None, err=None)
-
 
 @app.route('/task/', methods=['GET', 'POST'])
 def manage_tasks():
@@ -95,16 +45,25 @@ def manage_tasks():
                   return render_template('manage_tasks.html', form=form, message="Task Added Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
 
           elif (str(form.action.data) == "Update Task"):
-             if (len(str(form.status.data)) == 0):
+             if (form.status.data is None or len(str(form.status.data)) == 0):
                   field  = "Status"
                   err = "Please select Status"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
 
+             if (form.taskList.data is None or len(str(form.taskList.data)) == 0):
+                  field = "TaskList"
+                  err = "Please select task from list to Update"
+                  return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
              task = Task.query.filter_by(task=str(form.taskList.data)).update(dict(task=str(form.taskName.data),status=str(form.status.data)))
              db.session.commit()
              return render_template('manage_tasks.html', form=form, message="Task Updated Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
 
           elif (str(form.action.data) == "Delete Task"):
+             if (len(str(form.taskList.data)) == 0):
+                  field = "TaskList"
+                  err = "Please select task from list to Delete"
+                  return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
+
              task = Task.query.filter_by(task=str(form.taskList.data))
              status = Status.query.filter_by(task_id=task[0].id)
              try:
@@ -203,7 +162,9 @@ def update_status(id):
   status =  Status.query.filter_by(task_id=id)[0]
   try:
       if (request.method == 'POST'):
-          if (len(form.cupdate.data) < 1):
+          if (form.back.data):
+              return redirect(url_for('manage_status'))
+          elif (len(form.cupdate.data) < 1):
               err = "Please provide Proper Status of Task"
               form.id.data = status.id
               form.id.render_kw = {'disabled': 'disabled'}
@@ -215,7 +176,7 @@ def update_status(id):
               form.cupdate.data = status.cupdate
               form.issue.data = status.issues
               return render_template('update_status.html', form=form, ctime = datetime.now(), db_status=status, err=err)
-          if (form.onTrack.data == None):
+          elif (form.onTrack.data == None):
               err= "Please update if task is on track or not"
               form.id.data = status.id
               form.id.render_kw = {'disabled': 'disabled'}

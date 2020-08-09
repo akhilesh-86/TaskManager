@@ -1,45 +1,24 @@
+{% extends "base.html" %}
 {% block content %}
-<style>
-div {
-  font-family: arial, sans-serif;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid black;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-</style>
-
     <h2 style = "text-align: center;">Task Management Form</h2>
-      <form action = "" method = POST>
+      <form action = "" method = POST >
          <fieldset>
             <legend>Task Maintenance Form</legend>
-            <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;" >
+            <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;">
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
             <div style = "font-size:15px; font-weight:bold; margin-left:150px;" >
 	       {{ form.action }}
-               {{ form.taskName.label }} : {{ form.taskName }}<br>
+	       {{ form.taskName.label }} <br> {{ form.taskName(cols=80, rows=5) }}<br> 
                {{ form.status.label }} : {{ form.status }}
-	       {{ form.taskList.label }} : {{ form.taskList }}<br><br>
+	       {{ form.taskList.label }} : {{ form.taskList(onchange="updateTaskName()") }}<br><br>
                {{ form.submit }}
                {{ form.getTask }}
             </div>
-            <div style = "font-size:12px;  margin-left:150px; text-align=center; background-color:lightgreen" >
+            <div style = "font-size:12px;  margin-left:150px; text-align=center; background-color:green" >
             {% if message %} <br><br>{{ message }}<br><br> {% endif %}
             </div>
-            <div style = "font-size:12px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
+            <div style = "font-size:12px; color:red; margin-left:150px; text-align=center; background-color:yellow" >
             {% if err %} <br><br>{{ err }}<br><br> {% endif %}
             </div>
          </fieldset>
@@ -63,4 +42,9 @@ tr:nth-child(even) {
 	    </table>
          </fieldset>
       </form>
+      <script>
+	      function updateTaskName(){
+		      document.getElementById('taskName').value = document.getElementById('taskList').value
+	      }
+      </script>
 {% endblock %}

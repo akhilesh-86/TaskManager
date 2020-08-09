@@ -1,17 +1,23 @@
+{% extends "base.html" %}
 {% block content %}
+<style>
+div {
+  font-family: arial, sans-serif;
+}
+</style>	       
     <h2 style = "text-align: center;">Task Management Form</h2>
       <form action = "" method = POST>
          <fieldset>
             <legend>Status Update Form</legend>
-            <div style = "font-size:15px; font-weight:bold; margin-left:150px;" >
-	       {{ form.id.label }} : {{ form.id }} <br><br>
-	       {{ form.task_id.label }} : {{ form.task_id }}<br><br>
-	       {{ form.task.label }} : {{ form.task }} <br><br>
-	       {{ form.target.label }} : {{ form.target }}<br><br>
-	       {{ form.onTrack.label }} : {{ form.onTrack }}<br>
-	       {{ form.cupdate.label }} : {{ form.cupdate }}<br><br>
-	       {{ form.issue.label }} : {{ form.issue }}<br><br>
+            <div style = "font-size:12px; font-weight:bold; margin-left:150px;" >
+	       {{ form.id.label }} : {{ form.id }} {{ form.task_id.label }} : {{ form.task_id }}<br><br>
+	       {{ form.task.label }} <br> {{ form.task(rows=5, cols=80) }} <br><br>
+	       {{ form.target.label }} <br> {{ form.target( rows=5, cols=80) }}<br><br>
+	       {{ form.onTrack.label }} : {{ form.onTrack }}
+	       {{ form.cupdate.label }} <br> {{ form.cupdate( rows=5, cols=80) }}<br><br>
+	       {{ form.issue.label }} <br> {{ form.issue( rows=5, cols=80) }}<br><br>
                {{ form.submit }}
+               {{ form.back }}
             </div>
             <div style = "font-size:12px;  margin-left:150px; text-align=center; background-color:lightgreen" >
             {% if message %} <br><br>{{ message }}<br><br> {% endif %}

@@ -1,17 +1,13 @@
 from flask_wtf import FlaskForm
+from wtforms.widgets import TextArea
 from wtforms import StringField, SubmitField, validators, DateTimeField, RadioField, SelectField, PasswordField, BooleanField, IntegerField
 
-# Define QuoteForm below
-class QuoteForm(FlaskForm):
-  qauthor = StringField("Quotes Author", [validators.Length(min=3,max=100), validators.DataRequired()])
-  qstring = StringField("Quotes", [validators.Length(min=3,max=200), validators.DataRequired()])
-  submit = SubmitField("Add Quote")
 
 class TaskForm(FlaskForm):
   currTime = DateTimeField("Current Time")
   action = RadioField("Select Action", choices=["Add Task","Update Task", "Delete Task"])
   status = RadioField("Task Status", choices=["Open","Close"])
-  taskName = StringField("Task Description(New)", [validators.Length(min=5,max=500)])
+  taskName = StringField("Task Description", [validators.Length(min=5,max=500)], widget=TextArea())
   taskList = SelectField("Select Task to Update") # choices will be updated dynamically
   submit = SubmitField("Submit")
   getTask = SubmitField("Get Task List")
@@ -30,19 +26,20 @@ class UserForm(FlaskForm):
 
 class StatusForm(FlaskForm):
   taskName = StringField("Task Description(New)", [validators.Length(min=5,max=500)])
-  target = StringField("Target Description")
+  target = StringField("Target Description", widget=TextArea())
   status = BooleanField("Task Status")
-  currentUpdate = StringField("Current Status")
-  issues = StringField("Issues Related to Task")
+  currentUpdate = StringField("Current Status", widget=TextArea())
+  issues = StringField("Issues Related to Task", widget=TextArea())
  
 class StatusUpdateForm(FlaskForm):
-  id = IntegerField("Status ID")
+  id = IntegerField("Task Status ID")
   task_id = IntegerField("Task ID")
-  task = StringField("Task Description")
-  target = StringField("Target Description")
+  task = StringField("Task Description", widget=TextArea())
+  target = StringField("Target Description", widget=TextArea())
   onTrack = RadioField("On Track", choices=["Yes","No"])
-  cupdate = StringField("Current Update")
-  issue = StringField("Issues")
+  cupdate = StringField("Current Update", widget=TextArea())
+  issue = StringField("Issues", widget=TextArea())
   submit = SubmitField("Submit")
+  back = SubmitField("Back")
 
 

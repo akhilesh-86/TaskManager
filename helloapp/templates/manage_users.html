@@ -1,3 +1,4 @@
+{% extends "base.html" %}
 {% block content %}
     <h2 style = "text-align: center;">User Management Form</h2>
       <form action = "" method = POST>
@@ -6,7 +7,7 @@
             <div style = "font-size:12px; margin-left:150px; text-align:right; background-color:lightblue;" >
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
-            <div style = "font-size:20px; font-weight:bold; margin-left:150px;" >
+            <div >
 	       {{ form.action }}
                {{ form.userName.label }} : {{ form.userName }}<br><br>
                {{ form.password.label }} : {{ form.password }}<br><br>

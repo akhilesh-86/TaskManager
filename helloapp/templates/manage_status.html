@@ -1,25 +1,4 @@
-<style>
-div {
-  font-family: arial, sans-serif;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid black;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-</style>
-
+{% extends "base.html" %}
 {% block content %}
     <h2 style = "text-align: center;">Status Summary for All Open Tasks</h2>
       <form action = "" method = POST>
@@ -33,7 +12,7 @@ tr:nth-child(even) {
 			    <th>On Track</th>
 			    <th>Update Comments</th>
 			    <th>Issues</th>
-			    <th>Action Buttons</th>
+			    <th>Action</th>
 		   </tr>
 		    {% for task in db_status %}
 		    <tr>
