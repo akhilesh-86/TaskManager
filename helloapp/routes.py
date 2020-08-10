@@ -38,22 +38,31 @@ def manage_tasks():
               else:
                   id_db = UniqueIDs.query.all()
                   if (len(id_db) == 0):
-                      i = UniqueIDs(id=1, task_id=1)
+                      i = UniqueIDs(id=1, task_id=1, status_id=1)
                       db.session.add(i)
                       db.session.commit()
                       id = 1
                       status_id=1
                   else:
-                      id = id_db[0].task_id+1
-                      status_id=id_db[0].status_id+1
-                      i = UniqueIDs.query.filter_by(id=1).update(dict(task_id=id))
+                      if (id_db[0].task_id == None):
+                          id = 1
+                      else:
+                          id = int(id_db[0].task_id)+1
+
+                      print (id_db[0].status_id)
+                      if (id_db[0].status_id == None):
+                          status_id = 1
+                      else:
+                          status_id = int(id_db[0].status_id)+1
+
+                      i = UniqueIDs.query.filter_by(id=id_db[0].id).update(dict(task_id=id,status_id=status_id))
                       db.session.commit()
 
                   task = Task(id=id,updated = datetime.now(),task=form.taskName.data,status=form.status.data)
                   db.session.add(task)
                   db.session.commit()
                   task1 = Task.query.filter_by(updated=task.updated)[0]
-                  status = Status(d=status_id,task_id=task1.id,task=task1.task,onTrack=True)
+                  status = Status(id=status_id,task_id=task1.id,task=task1.task,onTrack=True)
                   db.session.add(status)
                   db.session.commit()
                   return render_template('manage_tasks.html', form=form, message="Task Added Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
