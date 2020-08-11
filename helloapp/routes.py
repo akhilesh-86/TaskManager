@@ -208,7 +208,12 @@ def manage_users():
 
           elif (str(form.action.data) == "Add User"):
 
-              if (form.userName.data is None or len(str(form.userName.data)) > 50 or len(str(form.userName.data)) < 2):
+              if (current_user.type != "Admin"):
+                  field = "Authentication"
+                  err = "User not Authorized.."
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
+
+              elif (form.userName.data is None or len(str(form.userName.data)) > 50 or len(str(form.userName.data)) < 2):
                   field  = "UserName"
                   err = "UserName Must be between 2-50 characters"
                   return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
@@ -230,15 +235,20 @@ def manage_users():
                   return render_template('manage_users.html', form=form, message="User Added Successfully", field=None, ctime = datetime.now(),user=db_user)
 
           elif (str(form.action.data) == "Update User Password"):
-             user = User.query.filter_by(name=str(form.userList.data)).update(dict(pwd=str(form.password.data)))
-             db.session.commit()
-             return render_template('manage_users.html', form=form, message="Password Updated Successfully", field=None, ctime = datetime.now(),user=db_user)
+              if (current_user.type != "Admin" and current_user.name != form.userList.data):
+                  field = "Authentication"
+                  err = "Change password of other user not allowed"
+                  return render_template('manage_users.html', form=form, err=err, field=field, ctime = datetime.now(),user=db_user)
+
+              user = User.query.filter_by(name=str(form.userList.data)).update(dict(pwd=str(form.password.data)))
+              db.session.commit()
+              return render_template('manage_users.html', form=form, message="Password Updated Successfully", field=None, ctime = datetime.now(),user=db_user)
 
           elif (str(form.action.data) == "Delete User"):
-             user = User.query.filter_by(name=str(form.userList.data))
-             db.session.delete(user[0])
-             db.session.commit()
-             return render_template('manage_users.html', form=form, message="User Deleted Successfully", field=None, ctime = datetime.now(),user=db_user)
+              user = User.query.filter_by(name=str(form.userList.data))
+              db.session.delete(user[0])
+              db.session.commit()
+              return render_template('manage_users.html', form=form, message="User Deleted Successfully", field=None, ctime = datetime.now(),user=db_user)
              
       elif (form.getUser.data):
 
