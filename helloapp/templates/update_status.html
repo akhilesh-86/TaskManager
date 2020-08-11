@@ -4,18 +4,18 @@
          <fieldset>
             <legend>Status Update Form</legend>
             <div style = "font-size:14px; " >
-	       {{ form.onTrack.label }} : {{ form.onTrack }}
-	       {{ form.target.label }} <br> {{ form.target( rows=3, cols=120) }} <br>
-	       {{ form.cupdate.label }} <br> {{ form.cupdate( rows=3, cols=120) }}<br><br>
-	       {{ form.issue.label }} <br> {{ form.issue( rows=3, cols=120) }}<br><br>
+               {{ form.onTrack.label }} : {{ form.onTrack }}
+               {{ form.target.label }} <br> {{ form.target( rows=3, cols=120) }} <br>
+               {{ form.cupdate.label }} <br> {{ form.cupdate( rows=3, cols=120) }}<br><br>
+               {{ form.issue.label }} <br> {{ form.issue( rows=3, cols=120) }}<br><br>
                {{ form.submit }}
                {{ form.back }}
             </div>
             <div style = "font-size:14px;text-align=center; background-color:lightgreen" >
-            {% if message %} <br><br>{{ message }}<br><br> {% endif %}
+               {% if message %} <br><br>{{ message }}<br><br> {% endif %}
             </div>
             <div style = "font-size:14px; color:red; text-align=center; background-color:lightred" >
-            {% if err %} <br><br>{{ err }}<br><br> {% endif %}
+               {% if err %} <br><br>{{ err }}<br><br> {% endif %}
             </div>
          </fieldset>
       </form>
@@ -26,8 +26,8 @@
       <form action = "" method = POST>
             <div style = "font-size:14px; " >
                {{ form.id.label }} : {{ form.id }} <br><br>
-	       {{ form.task_id.label }} : {{ form.task_id }}<br><br>
-	       {{ form.task.label }} <br><br> {{ form.task(rows=5, cols=28) }} <br><br>
+               {{ form.task_id.label }} : {{ form.task_id }}<br><br>
+               {{ form.task.label }} <br><br> {{ form.task(rows=5, cols=28) }} <br><br>
             </div>
       </form>
 {% endblock %}
