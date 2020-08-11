@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash, abort
+from flask_login import LoginManager
 import random
 from .models import UniqueIDs
 from .models import Task
@@ -8,14 +9,76 @@ from .forms import TaskForm
 from .forms import StatusUpdateForm
 from .forms import UserForm
 from .forms import StatusForm
+from .forms import LoginForm
 from helloapp import app, db
 from datetime import datetime
+#from .functions import login_user
+from flask_login import login_required, login_user, current_user, logout_user
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    # do stuff
+    return render_template('index.html', message="Unauthorized Access. Please Login")
+     
 @app.route('/')
 def hello():
     return render_template('index.html')
 
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    # Here we use a class of some kind to represent and validate our
+    # client-side form data. For example, WTForms is a library that will
+    # handle this for us, and we use a custom LoginForm to validate.
+    form = LoginForm()
+    if (request.method == 'POST'):
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        print (form.userName.data)
+        user = User.query.get(form.userName.data)
+        if user:
+#                bcrypt.check_password_hash(user.pwd, form.password.data):
+            if ( user.pwd == form.password.data ):
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user, remember=True)
+
+                flash("Logged in Successfully")
+#                next = request.args.get('next')
+                return redirect(url_for('hello'))
+
+            else:
+                err = "Invalid Password"
+                return render_template('login.html', form=form , err=err)
+
+        else:
+            err = "Invalid User or Password"
+            return render_template('login.html', form=form , err=err)
+
+    return render_template('login.html', form=form)
+
+@app.route("/logout/", methods=["GET"])
+@login_required
+def logout():
+    """Logout the current user."""
+    form = LoginForm()
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
+    logout_user()
+    return redirect(url_for('hello'))
+
 @app.route('/task/', methods=['GET', 'POST'])
+@login_required
 def manage_tasks():
   form = TaskForm()
   if (request.method == 'POST'):
@@ -84,16 +147,20 @@ def manage_tasks():
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
              l = Task.query.filter_by(task=str(form.taskName.data))
              try:
-                print (l[0])
                 found=True
              except:
                 found=False
+
              if (found == True and str(form.taskList.data) != str(form.taskName.data)):
                   field = "TaskName"
                   err = "Task Already Exists"
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
 
              task = Task.query.filter_by(task=str(form.taskList.data)).update(dict(task=str(form.taskName.data),status=str(form.status.data)))
+             
+             db_task = Task.query.filter_by(task=str(form.taskList.data))
+             status = Status.query.filter_by(task_id=db_task[0].id).update(dict(task=form.taskName.data))
+
              db.session.commit()
              return render_template('manage_tasks.html', form=form, message="Task Updated Successfully", field=None, ctime = datetime.now(), db_task=db_task_list)
 
@@ -104,11 +171,6 @@ def manage_tasks():
                   return render_template('manage_tasks.html', form=form, err=err, field=field, ctime = datetime.now(), db_task=db_task_list)
 
              task = Task.query.filter_by(task=str(form.taskList.data))
-#             status = Status.query.filter_by(task_id=task[0].id)
-#             try:
-#                 db.session.delete(status[0])
-#             except:
-#                 print ("Skipped")
              db.session.delete(task[0])
              db.session.commit()
              return render_template('manage_tasks.html', form=form, message="Task DeletedSuccessfully", field=None, ctime = datetime.now(), db_task=db_task_list)
@@ -132,9 +194,8 @@ def manage_tasks():
   return render_template('manage_tasks.html', form=form, ctime = datetime.now(), db_task=task)
  
 
-
-
 @app.route('/user/', methods=['GET', 'POST'])
+@login_required
 def manage_users():
   form = UserForm()
   if (request.method == 'POST'):
@@ -222,6 +283,7 @@ def manage_status():
  
 
 @app.route('/status/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update_status(id):
   form = StatusUpdateForm()
   status =  Status.query.filter_by(task_id=id)[0]

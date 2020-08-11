@@ -2,6 +2,11 @@ from flask_wtf import FlaskForm
 from wtforms.widgets import TextArea
 from wtforms import StringField, SubmitField, validators, DateTimeField, RadioField, SelectField, PasswordField, BooleanField, IntegerField
 
+class LoginForm(FlaskForm):
+  userName = StringField("User Name", [validators.Length(min=2,max=50)])
+  password = PasswordField("Password", [validators.Length(min=5,max=50)])
+  submit = SubmitField("Submit")
+  
 
 class TaskForm(FlaskForm):
   currTime = DateTimeField("Current Time")

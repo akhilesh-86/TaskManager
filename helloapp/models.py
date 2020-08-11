@@ -17,10 +17,27 @@ class Status(db.Model):
     issues = db.Column(db.String(500), index=True)
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), index=True)
+    name = db.Column(db.String(20), primary_key=True,index=True)
     type = db.Column(db.String(20), index=True)
     pwd = db.Column(db.String(20), index=True)
+    authenticated = db.Column(db.Boolean(), default=False)
+
+    def is_active(self):
+        """True, as all users are active."""
+        return True
+
+    def get_id(self):
+        """Return the email address to satisfy Flask-Login's requirements."""
+        return self.name
+
+    def is_authenticated(self):
+        """Return True if the user is authenticated."""
+        return self.authenticated
+
+    def is_anonymous(self):
+        """False, as anonymous users aren't supported."""
+        return False
+
 
 class StatusHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)

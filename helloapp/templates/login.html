@@ -1,20 +1,16 @@
-{% extends "base_split.html" %}
-{% block main %}
-    <h2 style = "text-align: center;">User Management Form</h2>
+{% extends "base.html" %}
+{% block content %}
+    <h2 style = "text-align: center;">User Login Form</h2>
       <form action = "" method = POST>
          <fieldset>
-            <legend>User Maintenance Form</legend>
+            <legend>User Login Form</legend>
             <div style = "font-size:14px; margin-left:150px; text-align:right; background-color:lightblue;" >
                {% if ctime %} {{ form.currTime.label }} {{ ctime }} {% endif %}
             </div>
             <div >
-	       {{ form.action.label }} : {{ form.action }}
-	       {{ form.userType.label }} : {{ form.userType }}
                {{ form.userName.label }} : {{ form.userName }}<br><br>
                {{ form.password.label }} : {{ form.password }}<br><br>
-	       {{ form.userList.label }} : {{ form.userList }}<br><br>
                {{ form.submit }}
-               {{ form.getUser }}
             </div>
             <div style = "font-size:14px;  margin-left:150px; text-align=center; background-color:lightgreen" >
             {% if message %} <br><br>{{ message }}<br><br> {% endif %}
@@ -22,28 +18,6 @@
             <div style = "font-size:14px; color:red; margin-left:150px; text-align=center; background-color:lightred" >
             {% if err %} <br><br>{{ err }}<br><br> {% endif %}
             </div>
-         </fieldset>
-      </form>
-{% endblock %}
-
-{% block static %}
-      <form action = "" method = POST>
-         <fieldset>
-            <legend>User's Available</legend>
-            <div style = "font-size:14px;text-align=center;" >
-	    <table style="width=100%; border: 1px solid black">
-		    <tr>
-			    <th>User Name</th>
-			    <th>User Type</th>
-		   </tr>
-		    {% for iuser in user %}
-		    <tr>
-			    <td>{{ iuser.name }}</td> 
-			    <td>{{ iuser.type }}</td> 
-		    </tr>
-		    {% endfor %}
-	    </table>
-	    </div>
          </fieldset>
       </form>
 {% endblock %}
